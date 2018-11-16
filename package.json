@@ -1,0 +1,32 @@
+{
+  "name": "@adopisowifi/ng-wifi-settings",
+  "version": "0.0.1",
+  "description": "Angular.js 1.x module for changing WAN settings",
+  "main": "dist/ado-ng-wifi-settings.js",
+  "scripts": {
+    "publish-package": "git push && git push --tags && npm publish --access public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AdoPisoWiFi/ado-ng-wifi-settings.git"
+  },
+  "keywords": [
+    "adopisowifi",
+    "timer-settings"
+  ],
+  "author": "AdoPisoWiFi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AdoPisoWiFi/ado-ng-wifi-settings/issues"
+  },
+  "homepage": "https://github.com/AdoPisoWiFi/ado-ng-wifi-settings#readme",
+  "devDependencies": {
+    "del": "^3.0.0",
+    "gulp": "^4.0.0",
+    "gulp-angular-templatecache": "^2.2.5",
+    "gulp-concat": "^2.6.1"
+  },
+  "dependencies": {
+    "@adopisowifi/save-config-btn": "^1.0.10"
+  }
+}

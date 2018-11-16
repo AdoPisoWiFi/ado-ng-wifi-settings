@@ -1,0 +1,94 @@
+
+<div ng-if="!$ctrl.settings.hostapd" uib-alert class="bg-info">
+  Network interface is set to <code>External Access Point</code>. Configure your access point, or select another interface in the advanced options.
+</div>
+
+<form name="wifiForm">
+
+  <div ng-if="$ctrl.settings.hostapd">
+
+    <div class="form-group" ng-class="{'has-error' : wifiForm.ssid.$invalid, 'has-success': wifiForm.ssid.$valid && wifiForm.ssid.$touched}">
+      <label>WiFi Name</label>
+      <input class="form-control" type="text" ng-model="$ctrl.settings.ssid" ng-maxlength="30" name="ssid" required>
+      <span class="help-block" ng-if="wifiForm.ssid.$error.required">SSID is required.</span>
+      <span class="help-block" ng-if="wifiForm.ssid.$error.maxlength">Maximum of 30 characters.</span>
+    </div>
+
+    <div class="form-group" ng-if="!$ctrl.settings.no_wpa" ng-class="{'has-error' : wifiForm.wpa_passphrase.$invalid, 'has-success': wifiForm.wpa_passphrase.$valid && wifiForm.wpa_passphrase.$touched}">
+      <label>WiFi Password <small>(minimum 8 characters)</small></label>
+      <input class="form-control" type="text" name="wpa_passphrase" ng-model="$ctrl.settings.wpa_passphrase" ng-minlength="8" required>
+      <span class="help-block" ng-if="wifiForm.wpa_passphrase.$error.required">WiFi Password is required.</span>
+      <span class="help-block" ng-if="wifiForm.wpa_passphrase.$error.minlength">Minimum of 8 characters.</span>
+    </div>
+
+    <div class="input-demo checkbox-demo">
+      <label class="checkbox-inline custom-checkbox nowrap">
+        <input type="checkbox" ng-model="$ctrl.settings.no_wpa">
+        <span>
+          Open WiFi <small>(no password)</small>
+        </span>
+      </label>
+    </div>
+
+  </div>
+
+  <div class="form-group" ng-if="!$ctrl.settings.dont_limit_stations" ng-class="{'has-error' : wifiForm.max_num_sta.$invalid, 'has-success': wifiForm.max_num_sta.$valid && wifiForm.max_num_sta.$touched}">
+    <label>Max number of wifi users</label>
+    <input class="form-control" type="number" name="max_num_sta" ng-model="$ctrl.settings.max_num_sta" min="1" max="200" required ng-disabled="$ctrl.settings.dont_limit_stations">
+    <span class="help-block" ng-if="wifiForm.max_num_sta.$error.required">This is required</span>
+    <span class="help-block" ng-if="wifiForm.max_num_sta.$error.min">Minimum of 1</span>
+    <span class="help-block" ng-if="wifiForm.max_num_sta.$error.max">Maximum of 200</span>
+  </div>
+
+  <div class="input-demo checkbox-demo" ng-class="{'has-error' : wifiForm.dont_limit_stations && wifiForm.max_num_sta.$invalid}">
+    <label class="checkbox-inline custom-checkbox nowrap">
+      <input type="checkbox" ng-model="$ctrl.settings.dont_limit_stations">
+      <span>
+        Don't limit the number of users
+      </span>
+    </label>
+  </div>
+
+
+  <div class="input-demo checkbox-demo" ng-if="$ctrl.config.hardware.model != 'espressobin_armbian'">
+    <label class="checkbox-inline custom-checkbox nowrap">
+      <input type="checkbox" ng-model="$ctrl.settings.show_advanced_options">
+      <span>
+        Show Advanced Options
+      </span>
+    </label>
+  </div>
+
+  <div class="form-group" ng-show="$ctrl.settings.show_advanced_options" ng-class="{'has-error': wifiForm.lan.$invalid}">
+
+    <label>Select Interface</label>
+
+    <input ng-if="$ctrl.config.hardware.model !== 'raspberry_pi_3'" class="form-control" type="text" name="lan" ng-model="$ctrl.settings.lan" required compare-to="$ctrl.config.wan" not-equal>
+    <select ng-if="$ctrl.config.hardware.model === 'raspberry_pi_3'" class="form-control" name="lan" ng-model="$ctrl.settings.lan" ng-change="$ctrl.setHostapd()">
+      <option value="wlan0">Built-in WiFi</option>
+      <!--<option value="wlan1">USB WiFi</option>-->
+      <option value="eth1">External Access Point</option>
+    </select>
+
+    <span class="help-block" ng-show="wifiForm.lan.$error.compareTo">
+      This interface is currently being used for WAN interface.
+    </span>
+    <span class="help-block" ng-show="wifiForm.lan.$error.required">
+      This is required.
+    </span>
+
+    <div class="checkbox" ng-if="$ctrl.config.hardware.model !== 'raspberry_pi_3'">
+      <label>
+        <input type="checkbox" ng-model="$ctrl.settings.hostapd" ng-disabled="$ctrl.config.hardware.model === 'raspbberry_pi_3'">
+        Enable hostapd (for wireless interface only)
+      </label>
+    </div>
+
+  </div>
+
+  <hr>
+
+  <save-config-btn device="$ctrl.device" config="{hostapd: $ctrl.settings.hostapd, lan: $ctrl.settings.lan, hostapd: $ctrl.settings.hostapd, ssid: $ctrl.settings.ssid, wpa_passphrase: $ctrl.settings.wpa_passphrase, no_wpa: $ctrl.settings.no_wpa, max_num_sta: $ctrl.settings.max_num_sta, limit_stations: !$ctrl.settings.dont_limit_stations}" ng-disabled="wifiForm.$invalid || wifiForm.$pristine">Save Changes</save-config-btn>
+
+</form>
+
